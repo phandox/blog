@@ -35,7 +35,6 @@
     state: present
   become: yes
 
-
 - name: Create directory for web content
   file:
     path: /www/
@@ -44,4 +43,13 @@
     mode: 0775
     state: directory
     setype: httpd_config_t
+  become: yes
+
+# TODO move defaults to its section
+- name: Create top-level Nginx configuration for webserver
+  template:
+    src: general_nginx_conf.j2
+    dest: /etc/nginx/nginx.conf
+    validate: /usr/sbin/nginx -c %s -t
+    backup: yes
   become: yes
