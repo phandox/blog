@@ -1,0 +1,25 @@
+---
+- name: Add nginx repository to OS
+  yum_repository:
+    name: nginx
+    state: present
+    gpgkey: "{{ NGINX_GPG_KEY_URL }}"
+    gpgcheck: yes
+    enabled: yes
+    description: "nginx repo"
+    baseurl: "http://nginx.org/packages/mainline/{{ ansible_distribution | lower }}/{{ ansible_distribution_major_version }}/$basearch/"
+  become: yes
+
+- name: Add RPM key for NGINX
+  rpm_key:
+    key: "{{ NGINX_GPG_KEY_URL }}"
+    state: present
+  become: yes
+
+
+- name: Install nginx 
+  package:
+    name: nginx
+    state: present
+  become: yes
+...
