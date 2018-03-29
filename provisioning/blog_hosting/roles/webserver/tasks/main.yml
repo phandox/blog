@@ -22,4 +22,26 @@
     name: nginx
     state: present
   become: yes
-...
+
+- name: Create directory structure for nginx
+  file:
+    path: /etc/nginx/conf.d/http/
+    state: directory
+  become: yes
+
+- name: Create a group allowing editing web content
+  group:
+    name: webeditors
+    state: present
+  become: yes
+
+
+- name: Create directory for web content
+  file:
+    path: /www/
+    owner: root
+    group: webeditors
+    mode: 0775
+    state: directory
+    setype: httpd_config_t
+  become: yes
