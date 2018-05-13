@@ -1,1 +1,3 @@
 NGINX_GPG_KEY_URL: "https://nginx.org/keys/nginx_signing.key"
+NGINX_TOPLVL_TEMPLATE: "general_nginx_conf.j2"
+NGINX_CONF_FILE_PATH: "/etc/nginx/"

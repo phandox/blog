@@ -48,8 +48,8 @@
 # TODO move defaults to its section
 - name: Create top-level Nginx configuration for webserver
   template:
-    src: general_nginx_conf.j2
-    dest: /etc/nginx/nginx.conf
+    src: "{{ NGINX_TOPLVL_TEMPLATE }}"
+    dest: "{{ NGINX_CONF_FILE_PATH }}/nginx.conf"
     validate: /usr/sbin/nginx -c %s -t
     backup: yes
   become: yes

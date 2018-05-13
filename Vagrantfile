@@ -14,7 +14,9 @@ Vagrant.configure("2") do |config|
   config.vm.define "auto_web", autostart: false do |auto_web|
     auto_web.vm.box = "centos/7"
     auto_web.vm.network "forwarded_port", guest: 80, host: 8888, host_ip: "127.0.0.1"
+      auto_correction = true
     auto_web.vm.provision "ansible" do |ansible|
+      ansible.limit = "all"
       ansible.verbose = "v"
       ansible.playbook = "provisioning/blog_hosting/webservers.yml"
     end

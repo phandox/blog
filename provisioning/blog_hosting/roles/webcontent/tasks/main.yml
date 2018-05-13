@@ -1,0 +1,19 @@
+...
+- name: Rebuild Jekyll site in Docker container on localhost
+  docker_container:
+    name: jekyll_builder
+    image: jekyll/jekyll
+    volumes:
+      - "/home/lukas/blog/jekyll-blog/:/srv/jekyll"
+      - "/home/lukas/blog/jekyll-blog/vendor/:/usr/local/bundle"
+    command: "jekyll build --destination /home/lukas/blog/jekyll-blog/"
+    state: started
+
+- name: Copy generated site to webserver
+  copy:
+    src: "/home/lukas/blog/jekyll-blog/_site/"
+    dest: "/www/blog/"
+    setype: httpd_config_t
+  become: yes
+
+---
