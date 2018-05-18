@@ -4,3 +4,6 @@ _site
 .vscode
 .vagrant/
 vendor/
+
+# Ansible files to ignore
+*.retry

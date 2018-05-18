@@ -1,0 +1,55 @@
+- name: Gather OS facts for role
+  include_vars: 
+    file: "{{ item }}"
+  loop: 
+    - "{{ ansible_os_family | lower }}.yml"
+
+- name: Install dependecies
+  package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ docker_dependencies }}"
+  become: yes
+
+- name: add docker repository | RedHat
+  yum_repository:
+    name: docker-ce-stable
+    description: "Docker CE Stable - $basearch"
+    baseurl: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/$releasever/$basearch/stable"
+    gpgcheck: true
+    gpgkey: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    state: present
+    enabled: yes
+  become: yes
+  when: ansible_os_family == "RedHat" and ansible_distribution != "OracleLinux"
+
+  
+- name: Install Docker
+  yum:
+    name: docker-ce
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: Enable and start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Make sure group docker is created
+  group:
+    name: docker
+    state: present
+  become: yes
+
+- name: Create Docker user and add him to group Docker group
+  user:
+    name: docker_operator
+    comment: User for managing containers
+    group: docker
+  become: yes
+
+
+  
