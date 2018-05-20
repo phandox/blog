@@ -6,9 +6,8 @@
 
 - name: Install dependecies
   package:
-    name: "{{ item }}"
+    name: "{{ docker_dependencies }}"
     state: present
-  loop: "{{ docker_dependencies }}"
   become: yes
 
 - name: add docker repository | RedHat
@@ -23,7 +22,6 @@
   become: yes
   when: ansible_os_family == "RedHat" and ansible_distribution != "OracleLinux"
 
-  
 - name: Install Docker
   yum:
     name: docker-ce
@@ -46,10 +44,26 @@
 
 - name: Create Docker user and add him to group Docker group
   user:
-    name: docker_operator
+    name: "{{ docker_user_name }}"
     comment: User for managing containers
     group: docker
+    password: "{{ docker_user_password }}" # already hashed with salted SHA512 - Jinja2 filters doesn't work on Vault values
   become: yes
 
+- name: Make sure .ssh is created for user
+  file:
+    path: "/home/{{ docker_user_name }}/.ssh/"
+    owner: "{{ docker_user_name }}"
+    mode: 0700 # rwx------
+    state: directory
+    setype: _default # will put seuser type for SELinux
+  become: yes
 
-  
+- name: Copy public key to machine for passwordless login
+  copy:
+    src: '/home/lukas/.ssh/id_rsa_passwordless.pub'
+    dest: '/home/{{ docker_user_name }}/.ssh/authorized_keys' # This will override all known authorized keys
+    mode: 0600 # rw-------
+    owner: "{{ docker_user_name }}"
+    setype: _default # will put seuser type for SELinux
+  become: yes

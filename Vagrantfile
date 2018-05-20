@@ -8,6 +8,7 @@ Vagrant.configure("2") do |config|
     docker_single_host.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
     config.vm.provision "ansible" do |ansible|
       ansible.playbook = "provisioning/docker_host/site.yml"
+      ansible.ask_vault_pass = true
     end
   end
 
