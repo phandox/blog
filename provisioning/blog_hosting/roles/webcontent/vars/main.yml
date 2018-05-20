@@ -1,7 +1,0 @@
-BLOG_ROOT_DIR: "/www/blog"
-BLOG_LISTEN_PORT: 80
-SERVER_NAMES:
-  - "blog.lukasnagy.cz"
-  - "www.lukasnagy.cz"
-  - "lukasnagy.cz"
-ERROR_PAGE: "/404.html"

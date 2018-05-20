@@ -1,8 +1,0 @@
-server {
-    root "{{ BLOG_ROOT_DIR }}";
-    listen "{{ BLOG_LISTEN_PORT }}";
-    server_name {% for srv_name in SERVER_NAMES %} srv_name {% endfor %};
-    
-    location / {}
-    error_page 404 "{{ ERROR_PAGE }};
-}

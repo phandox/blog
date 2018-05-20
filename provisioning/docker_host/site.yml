@@ -1,5 +1,7 @@
 - hosts: all
+  name: Install Docker on machine
   gather_facts: yes
-  
   roles:
     - docker
+
+# TODO Do hardening of OS based on https://dev-sec.io/ 

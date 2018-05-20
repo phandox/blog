@@ -10,6 +10,19 @@
     state: present
   become: yes
 
+- name: Install Python pip
+  package:
+    name: 
+      - python-pip 
+      - python-wheel
+    state: present
+  become: yes
+
+- name: Make sure Docker-py is not installed on system
+  pip:
+    name: docker-py
+    state: absent
+    
 - name: add docker repository | RedHat
   yum_repository:
     name: docker-ce-stable
