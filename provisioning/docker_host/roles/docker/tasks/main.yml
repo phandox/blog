@@ -4,6 +4,11 @@
   loop: 
     - "{{ ansible_os_family | lower }}.yml"
 
+- name: Set up correct timezone
+  timezone:
+    name: Europe/Prague
+  become: yes
+
 - name: Install dependecies
   package:
     name: "{{ docker_dependencies }}"
@@ -63,6 +68,15 @@
     password: "{{ docker_user_password }}" # already hashed with salted SHA512 - Jinja2 filters doesn't work on Vault values
   become: yes
 
+- name: Create sudoers file for "{{ docker_user_name }}" settings
+  template:
+    src: docker_user_sudoers.j2
+    dest: '/etc/sudoers.d/{{ docker_user_name }}'
+    mode: 0440
+    validate: /sbin/visudo -c -f %s
+  become: yes
+
+
 - name: Make sure .ssh is created for user
   file:
     path: "/home/{{ docker_user_name }}/.ssh/"
@@ -80,3 +94,13 @@
     owner: "{{ docker_user_name }}"
     setype: _default # will put seuser type for SELinux
   become: yes
+
+- name: Create directory structure for storing files required for Docker containers
+  file:
+    path: "/docker_resources/"
+    owner: "{{ docker_user_name }}"
+    mode: 0766
+    state: directory
+    setype: _default
+  become: yes
+

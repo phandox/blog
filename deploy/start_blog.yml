@@ -1,10 +1,6 @@
 - hosts: all
   remote_user: docker_operator # User with membership in docker group
   name: Deploy local version of Jekyll blog to server and start web server
-  vars:
-    jekyll_blog_rootdir: /home/lukas/blog/jekyll-blog
-    jekyll_cached_gemsdir: /home/lukas/blog/jekyll-blog/vendor/bundle
-    jekyll_blog_destination: /home/lukas/blog/jekyll-blog
 
   tasks:
     - name: Ensure, dependencies are installed on host # Makes sure that remote_user have docker-py installed
@@ -12,30 +8,5 @@
         name: docker-py
         state: present
         extra_args: --user
-
-    - name: Generate blog with Jekyll container on localhost
-      docker_container:
-        name: jekyll_builder
-        image: jekyll/jekyll
-        volumes:
-          - "{{ jekyll_blog_rootdir }}/:/srv/jekyll"
-          - "{{ jekyll_cached_gemsdir }}/:/usr/local/bundle"
-        command: "jekyll build --destination {{ jekyll_blog_destination }}/"
-        state: started
-        auto_remove: yes
-      delegate_to: 127.0.0.1
-
-    - name: Copy generated blog to remote host
-      copy:
-        src: "{{ jekyll_blog_rootdir }}/_site/"
-        dest: "~/www/content/blog/"
-    
-    - name: Start web server with blog
-      docker_container:
-        name: blog_webserver
-        image: "nginx:stable-alpine"
-        volumes:
-          - /home/docker_operator/www/content/blog/:/usr/share/nginx/html:ro
-        state: started
-        published_ports:
-          - 8080:80
+  roles:
+    - nginx-blog

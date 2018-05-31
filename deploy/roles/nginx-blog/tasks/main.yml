@@ -1,0 +1,51 @@
+- name: Generate blog with Jekyll container on localhost
+  docker_container:
+    name: jekyll_builder
+    image: jekyll/jekyll
+    volumes:
+      - "{{ local_jekyll_blogdir }}/:/srv/jekyll"
+      - "{{ jekyll_cached_gemsdir }}/:/usr/local/bundle"
+    command: "jekyll build --destination {{ local_jekyll_blogdir }}/"
+    state: started
+    auto_remove: yes
+  delegate_to: 127.0.0.1
+
+- name: Create Docker Named Volumes for configuration and web content
+  docker_volume:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "nginx-main-config"
+    - "nginx-conf-dir"
+    - "nginx-blog-content"
+  register: docker_volume_facts
+
+- name: Copy generated blog to remote host
+  copy:
+    src: "{{ local_jekyll_blogdir }}/_site/"
+    dest: "{{ item.ansible_facts.docker_volume.Mountpoint }}"
+  when: item.ansible_facts.docker_volume.Name == "nginx-blog-content"
+  loop: "{{ docker_volume_facts.results }}"
+  become: yes
+
+- name: Create NGINX main config file
+  template:
+    src: nginx.conf.j2
+    dest: "{{ item.ansible_facts.docker_volume.Mountpoint }}/nginx.conf"
+    validate: docker run --rm --name nginx-validate -v %s:/etc/nginx/nginx.conf nginx:stable-alpine nginx -c /etc/nginx/nginx.conf -t
+  when: item.ansible_facts.docker_volume.Name == "nginx-main-config"
+  loop: "{{ docker_volume_facts.results }}"
+
+
+- name: Start web server with blog
+  docker_container:
+    name: blog_webserver
+    image: "nginx:stable-alpine"
+    volumes:
+      - "nginx-main-config:/etc/nginx/nginx.conf:ro,z"
+      - "nginx-blog-content:{{ webcontent_dir }}:ro,z"
+      - "nginx-conf-dir:/etc/nginx/conf.d/:ro,z"
+    state: started
+    published_ports:
+      - "{{ docker_host_webport }}:80"
+    restart: yes
