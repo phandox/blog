@@ -35,17 +35,20 @@
     validate: docker run --rm --name nginx-validate -v %s:/etc/nginx/nginx.conf nginx:stable-alpine nginx -c /etc/nginx/nginx.conf -t
   when: item.ansible_facts.docker_volume.Name == "nginx-main-config"
   loop: "{{ docker_volume_facts.results }}"
+  become: yes
 
 
 - name: Start web server with blog
   docker_container:
     name: blog_webserver
     image: "nginx:stable-alpine"
+    volume_driver: local
     volumes:
-      - "nginx-main-config:/etc/nginx/nginx.conf:ro,z"
-      - "nginx-blog-content:{{ webcontent_dir }}:ro,z"
+      - "nginx-main-config:{{ nginx_main_config_dir }}/:ro,z"
+      - "nginx-blog-content:{{ webcontent_dir }}/blog/:ro,z"
       - "nginx-conf-dir:/etc/nginx/conf.d/:ro,z"
     state: started
     published_ports:
       - "{{ docker_host_webport }}:80"
+    command: 'nginx -c {{ nginx_main_config_dir }}/nginx.conf -g "daemon off;"'
     restart: yes
