@@ -95,12 +95,4 @@
     setype: _default # will put seuser type for SELinux
   become: yes
 
-- name: Create directory structure for storing files required for Docker containers
-  file:
-    path: "/docker_resources/"
-    owner: "{{ docker_user_name }}"
-    mode: 0766
-    state: directory
-    setype: _default
-  become: yes
 

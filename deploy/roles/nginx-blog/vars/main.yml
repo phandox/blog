@@ -1,8 +1,3 @@
-webserver_docker_dir: "{{ docker_resources_dir }}/webserver"
-webserver_config_volumes_dir: "{{ webserver_docker_dir }}/configuration"
-webserver_content_dir: "{{ webserver_docker_dir}}/content"
-webserver_log_dir: "{{ webserver_docker_dir }}/logs"
-
 local_jekyll_blogdir: /home/lukas/blog/jekyll-blog
 jekyll_cached_gemsdir: "{{ local_jekyll_blogdir }}/vendor/bundle"
 

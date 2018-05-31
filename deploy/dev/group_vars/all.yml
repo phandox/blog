@@ -1,2 +1,1 @@
-docker_resources_dir: "/docker_resources"
 docker_host_webport: 8080
