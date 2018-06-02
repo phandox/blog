@@ -1,3 +1,9 @@
+- name: Delete old local blog content
+  file:
+    path: "{{ local_jekyll_blogdir }}/_site/"
+    state: absent
+  delegate_to: 127.0.0.1
+
 - name: Generate blog with Jekyll container on localhost
   docker_container:
     name: jekyll_builder
@@ -20,10 +26,12 @@
     - "nginx-blog-content"
   register: docker_volume_facts
 
-- name: Copy generated blog to remote host
-  copy:
+- name: Synchronize generated blog with remote site
+  synchronize:
     src: "{{ local_jekyll_blogdir }}/_site/"
     dest: "{{ item.ansible_facts.docker_volume.Mountpoint }}"
+    delete: yes
+    recursive: yes
   when: item.ansible_facts.docker_volume.Name == "nginx-blog-content"
   loop: "{{ docker_volume_facts.results }}"
   become: yes
