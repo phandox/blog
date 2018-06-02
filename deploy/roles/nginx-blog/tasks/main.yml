@@ -11,7 +11,7 @@
     volumes:
       - "{{ local_jekyll_blogdir }}/:/srv/jekyll"
       - "{{ jekyll_cached_gemsdir }}/:/usr/local/bundle"
-    command: "jekyll build --destination {{ local_jekyll_blogdir }}/"
+    command: "jekyll build --incremental --destination /srv/jekyll/_site/"
     state: started
     auto_remove: yes
   delegate_to: 127.0.0.1
