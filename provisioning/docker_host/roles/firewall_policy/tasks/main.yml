@@ -4,6 +4,7 @@
     enabled: no
     state: stopped
   become: yes
+  ignore_errors: yes # If the case is that firewalld is not installed, don't let ansible crash (DigitalOcean doesn't have it installed)
 
 - name: Install iptables-services on Centos 7
   yum:
