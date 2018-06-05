@@ -60,3 +60,18 @@
       - "{{ docker_host_webport }}:80"
     command: 'nginx -c {{ nginx_main_config_dir }}/nginx.conf -g "daemon off;"'
     restart: yes
+
+- name: Allow connection to exposed web port
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ docker_host_webport }}"
+    ctstate:
+      - NEW
+    state: present
+  become: yes
+
+# TODO fix to do this only on handler
+- name: Save iptables config
+  command: service iptables save
+  become: yes
