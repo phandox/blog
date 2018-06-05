@@ -1,0 +1,62 @@
+- name: Allow already established and related connections
+  iptables:
+    chain: OUTPUT
+    ctstate:
+      - ESTABLISHED
+      - RELATED
+    state: present
+  become: yes
+
+- name: Allow outgoing DNS traffic on TCP
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    destination_port: 53
+    ctstate:
+      - NEW
+      - ESTABLISHED
+      - RELATED
+  become: yes
+
+- name: Allow outgoing DNS traffic on UDP
+  iptables:
+    chain: OUTPUT
+    protocol: udp
+    destination_port: 53
+  become: yes
+
+- name: Allow outgoing HTTP traffic
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    destination_port: 80
+    ctstate:
+      - NEW
+      - ESTABLISHED
+      - RELATED
+  become: yes
+
+- name: Allow outgoing HTTPS traffic
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    destination_port: 443
+    ctstate:
+      - NEW
+      - ESTABLISHED
+      - RELATED
+  become: yes
+
+- name: Allow outgoing NTP traffic
+  iptables:
+    chain: OUTPUT
+    protocol: udp
+    destination_port: 123
+  become: yes
+
+# TODO need to find out what needs to be allowed for setting the outbound to drop
+# - name: Set outgoing policy to DROP
+#   iptables:
+#     chain: OUTPUT
+#     policy: DROP
+#   become: yes
