@@ -7,3 +7,9 @@ vendor/
 
 # Ansible files to ignore
 *.retry
+
+# Terraform ignore files
+.terraform/
+*.tfplan
+*.tfstate.*
+crash.log
