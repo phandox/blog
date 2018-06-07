@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "Behind the scene of a blog - part 1"
-date:   2018-06-07 16:16:01 +0100
+title:  "Behind the scenes of blog - part 1"
+date:   2018-06-07 06:00:00 +0100
 categories: behind_the_scenes
 ---
 

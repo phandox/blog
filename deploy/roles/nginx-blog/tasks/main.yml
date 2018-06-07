@@ -13,7 +13,7 @@
       - "{{ jekyll_cached_gemsdir }}/:/usr/local/bundle"
     command: "jekyll build --destination /srv/jekyll/_site/"
     state: started
-    auto_remove: yes
+    auto_remove: no
   delegate_to: 127.0.0.1
 
 - name: Create Docker Named Volumes for configuration and web content
