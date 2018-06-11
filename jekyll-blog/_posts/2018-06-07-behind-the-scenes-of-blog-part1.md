@@ -30,7 +30,7 @@ Having everything in a text file and not use some sort of VCS? That would just k
 
 ### Automation ready
 
-I am a big fan of [Ansible](https://www.ansible.com). As a network engineer I've always looked at Linux guys how they can keep the state of machine using Puppet agents on servers and just by changing configuration on master node, everything obeyed the master. Then I've looked at my Cisco switch with IOS and sigh that there is no way I would get the agent there. But then Ansible and it's agent-less approach came and finally I could try out some automation on good old switches, routers. It's not perfect, but still better than nothing. My exposure to Ansible was then the choice of configuration management I would use on this blog.
+I am a big fan of [Ansible](https://www.ansible.com). As a network engineer I've always looked at Linux guys how they can keep the state of machine using Puppet agents on servers and just by changing configuration on master node, everything obeyed the master. Then I've looked at my Cisco switch with IOS and sigh that there is no way I would get the agent there. But then Ansible and it's agent-less approach came and finally I could try out some automation on good old switches, routers. It's not perfect, but with every new version, networking support gets better and better. My exposure to Ansible was then the choice of configuration management I would use on this blog.
 
 ### Dev / Test / Production environments
 
@@ -42,16 +42,16 @@ Everybody is talking about containers and as I want to learn more about them, al
 
 ## Part 2 - how did I work?
 
-### Getting to know Jekyll
-- Started with Jekyll - followed the quick start to run on my local machine. I didn't want to fill my computer with Ruby dependencies so I used Docker container with internal server and got a general look on how would the posts look like.
+With the goals set for the project, time to get the actual work done. In this post, I describe the initial, first attempt for creating a site, so trust me, it's **far** from perfect. From the point of architecture all through best practices, there is certainly a room for improvement. The main point of this part is to say it's fine to start and create something tangible that you can improve on and learn on mistakes / false assumptions. 
 
-### From local OS to ... Vagrant?
-- Build the local development environment.
-- having it in docker container abstract me from underlying OS I would use in VM provider. I had to start from scratch
-- I've chosen CentOS 7 
-    - I have the feeling that is mature for production
-    - I won't be spoiled by latest versions of all the goodies
-    - SELinux out of box which I feel is very important for Docker host
+### Getting to know Jekyll
+When I've chosen the Jekyll as my generator of blog, I know that I don't want to fill up my laptop with unnecessary Ruby dependencies that the Jekyll need. So I've use [Docker container of Jekyll](https://github.com/envygeeks/jekyll-docker) to test the waters, see how does the Minima theme look like on development server. I didn't really changed or customized my Dockerfile as I haven't see it as it being necessary for such a simple use case. Having `jekyll serve` to run inside container and mapping the ports to host ports I saw the simple template posts. Well that was easy and very quick start. As I was happy with Minima layout I moved to more interesting part for me and that is creating a server to run the Jekyll generated content. 
+
+### From laptop to...Vagrant?
+
+To satisfy my goal of having [separate environments](link here) I needed to get used to working on dedicated machine right from the start. As you can see in [history of repo](https://github.com/phandox/blog/commit/2ee3def6a340f3ce99d616bc874cf783bc872a79) I though that at first I will learn how to install nginx right into OS and then I will try the container stuff. However I've abandoned this idea for going straight into container word as doing nginx in container doesn't strip me from managing my configuration files. I still have to get an understanding of web server stuff even though it's in container. So the lesson taken from that shift is that even though spinning up new service in Docker container is easy (just look at the few instructions in README files of all Dockerfiles), it doesn't hide the fact that you still have to go beyond default settings, as they are usually fit for development purposes.
+
+For the base box in Vagrant I've chosen CentOS 7. The reason behind CentOS is that it is still a traditional full Linux, ready for production and more importantly it's by default ready to enforce SELinux. I remember that few years ago, there were tons of Linux tutorials starting with *Make sure you turn off SELinux before continuing*. During my search now in 2018 I found very good introduction resources about SELinux, why is it important and not this annoying thing that makes your life miserable. So I am definitely not a guy who would just ignore SELinux and for Docker host I feel that it is especially important to have. Docker process is quite powerful and having this extra safety net if things go south so your container doesn't take over control of all other container contents is pretty mandatory in my opinion. 
 
 ## Stop using vagrant ssh - Ansible it's your turn
 - create playbooks from the start, troubleshoot if something doesn't work via SSH
