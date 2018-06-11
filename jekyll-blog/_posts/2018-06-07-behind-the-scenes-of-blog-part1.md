@@ -5,22 +5,40 @@ date:   2018-06-07 06:00:00 +0100
 categories: behind_the_scenes
 ---
 
-# Introduction - what is this series?
-
 Welcome to the first of many post in series *Behind the scenes of blog*! As this is not just my first blog post here but a whole first blog ever, I've decided to share my learning process about various technologies I've used while creating this site. From most of them I've just heard the cool name of the product, stickers of logos on every single laptop (of course I also have stickers on mine) and read about the hype around Docker, Vagrant, Jenkins, Terraform, Kubernetes and how they are so *amazing* and that they make life so much easier...
 
 And I've said to myself; *"Well this is all great, the talks are super interesting but how does it work and is it hard to start? Finishing quick start of Docker tutorial is one thing but using this on some real site must be different game right?"* So the best thing to learn, or better word, *to expose* myself to this all new trendy technologies is to get hands dirty and try build something. Blog is probably just the stepping stone, as it provides me the space to tell you about all the hiccups and small victories I've encountered when trying to build something simple and small. 
 
 I hope that someone will find this a little bit useful, maybe it will encourage you in similar position as I am, that building something and *sharing* your thoughts is not this big scary monster as it looks like. Enough of intro, let's get down to business!
 
-# Why blog? Ideas behind it
-
-- platform for sharing thoughts and not dependent on other platforms
-- encouragement and inspiration from Packet Pushers 
-- to learn what it takes to maintain a public facing site
-
 # Part 1 - Goals of the blog and technology behind it
 
+Before starting a new project I like to make a short list of goals to be clear what am I trying to achieve and why am I doing a particular project. You already know why, so here are the main pillars of blog:
+
+- Simple
+- Versioning-friendly
+- Automation ready
+- Dev / Test / Production environments
+- Containers
+
+#### Simple 
+The content delivery should be very simple. My preferred workflow is to work with text files so by having fully featured CMS such as Wordpress would not be my goal. I've peaked into the world of static-site generators and I found [Jekyll](https://jekyllrb.com) to really fit my needs. Being able to create website just from Markdown text? You sold me right there. By design this also checks my other goal and that is...
+
+#### Versioning-friendly
+
+Having everything in a text file and not use some sort of VCS? That would just kill the purpose of having a text files in the first place. Being able to rollback to older version of blog by just using Git is very helpful. I've decided to have everything in one repository and using branches as my workflow to work on different areas of blog is sufficient for me. Want to include a new container into infrastructure in dev? Just switch the branch and code way. 
+
+#### Automation ready
+
+I am a big fan of [Ansible](https://www.ansible.com). As a network engineer I've always looked at Linux guys how they can keep the state of machine using Puppet agents on servers and just by changing configuration on master node, everything obeyed the master. Then I've looked at my Cisco switch with IOS and sigh that there is no way I would get the agent there. But then Ansible and it's agent-less approach came and finally I could try out some automation on good old switches, routers. It's not perfect, but still better than nothing. My exposure to Ansible was then the choice of configuration management I would use on this blog.
+
+#### Dev / Test / Production environments
+
+This was actually my first goal that came to my mind. With the help of configuration management I can spin up very similar environments for trying out the scripts and output of the work. [Vagrant](https://www.vagrantup.com/) helped me to quickly create base CentOS in VirtualBox and then I've build Ansible playbooks which feed the Vagrant provisioning. After debugging the errors it was very satisfying to see that the playbook did what it was supposed to and my blog was online in my VM. So after having this in my VM, build purely from Ansible playbook, I just need to change the Ansible inventory to the production droplet in Digital Ocean cloud and I have the same thing right? And surprisingly, it almost worked at the first try! Of course I haven't realized at first that I forgot about `iptables` configuration, but I've created basic iptables ruleset in Ansible, provisioned the dev environment, checked that configuration looks like I've indented and then just running the same playbook on different inventory set and production had the firewall ready. 
+
+#### Containers
+
+Everybody is talking about containers and as I want to learn more about them, all services I use are inside Docker containers. I like the concept that each Docker container is responsible for one thing (similar to Unix way **insert link here**). I like that they create and abstraction layer on base OS, which helps with portability. Right now I have one VM which serves me as Docker host and I am looking forward to see how much workload I can put on the host before I notice performance degradation. After that I will try to scale the application horizontally, adding more small droplets and play with clustering options and I believe that very soon I will need some container orchestration such as Kubernetes or Docker Swarm. 
 - Simple - Markdown and directory structure is much better for me than full CMS of Wordpress. Jekyll has been chosen.
 - Versioning - Everything is a text so it's easy to version in one repository, hosted on GitHub.
 - Automation - don't use SSH to manually go inside VM and do the configuration changes. Ansible helps me to achieve this.
