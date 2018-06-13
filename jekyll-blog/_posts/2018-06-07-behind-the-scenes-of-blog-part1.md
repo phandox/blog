@@ -77,15 +77,16 @@ I've consider changing outbound policy to `DROP` as I would explicitly define wh
 
 ## OS is ready, time for containers
 
-I have my Vagrant box provisioned, `docker run hello-world` works flawlessly, time to put more useful containers.
-- NGINX as web server for hosting my blog
-- Blog is generated locally on my laptop with Docker
-- Files are moved into named volumes on OS
-- mounted to NGINX together with configuration
-- everything is obviously done by Ansible
-- some flaws
-    - Blog is regenerated even though no changes were made
-    - Sync is mirror - if I deleted post on my laptop, it is deleted from site too - this is maybe by design - I want to repository be the single source of truth
+I have my Vagrant box provisioned, `docker run hello-world` works flawlessly, time to set up more useful containers.
+For a web server, which will host blog site I've chosen `nginx`.Because I've already used Ansible for provisioning, I wrote Ansible playbook for deploying the Jekyll blog on the server.
+
+As I've read through Docker documentation about [volumes](https://docs.docker.com/storage/volumes/), I've learned that named volumes are now preferred way to mount and handle external data from host to container. It caused me a small clash with README instructions of [nginx image](https://hub.docker.com/_/nginx/), where you use bind mount for attaching the data. So my blog content, `nginx.conf` file are mounted as named volumes inside container. I've encountered error when I've tried to mount the `nginx.conf` file to `/etc/nginx/nginx.conf` inside container and the reason is that you can't mount the named volume to a file, it has be a directory. I could have just bake `nginx.conf` file inside container but I like the fact that I can just change `nginx.conf` file with volume to different configuration and the container doesn't drag additional data, although the creation of directory and launching nginx with non-default configuration might be over-complicated.
+
+Right now, the workflow of deployment isn't perfect. I am always removing the generated Jekyll `_site` to have the most up to date version synced inside container. It takes few seconds to create but I loose the idempotency. I've also used `synchronize` module instead of `copy` in Ansible as it is much faster for many small file because of the nature of rsync behind the scenes. The flag `delete` is enabled, which mirrors the directory with synchronize - if I delete the post in my repository, it will also be deleted from blog. This helps me to keep a Git repository as single source of truth. 
+
+When the content of blog is ready and on the machine, I use Ansible `template` module to generate and send main `nginx.conf` file destination of named docker volume. They are created in previous steps of playbook, so the variable is defined. 
+
+All the files are ready and Ansible moves to actually run the container. Right now it's just single container of nginx with mounted volumes and exposed port. The port which is exposed is defined in `group_vars` of inventory which allows me to just reference variable inside Ansible task and in inventory I can change the port depends if the deployments is happening in Vagrant or in the production environment. After this is done, I make a new rule in iptables to make sure that exposed port from Docker is accessible from outside and I am greeted by my blog on my localhost on the forwarded Vagrant port.
 
 ## We are up and running in local VM, time to show the world
 - Where to host? 
