@@ -88,20 +88,19 @@ When the content of blog is ready and on the machine, I use Ansible `template` m
 
 All the files are ready and Ansible moves to actually run the container. Right now it's just single container of nginx with mounted volumes and exposed port. The port which is exposed is defined in `group_vars` of inventory which allows me to just reference variable inside Ansible task and in inventory I can change the port depends if the deployments is happening in Vagrant or in the production environment. After this is done, I make a new rule in iptables to make sure that exposed port from Docker is accessible from outside and I am greeted by my blog on my localhost on the forwarded Vagrant port.
 
-## We are up and running in local VM, time to show the world
-- Where to host? 
-    - requirements
-        - relatively cheap
-        - REST API support
-        - extra goodies like firewalls, load balancers
-        - hourly billing - easy to spin up VMs and destroy them after test
-        - Terraform support is a plus
-- the winner so far? Digital Ocean.
-- cons?
-    - not your typical "cloud". You don't have this vast number of tools which are in AWS or Azure
-    - you have simple VPS however, able to be created by REST API
+## Blog lives inside laptop, time to show the world
 
-## Deploy the infamous "Infrastructure as Code"
+In dev environment I have created blog site, which shows me the result, everything looks good, time to replicate this to something else than Vagrant box. As I've already made the Ansible playbooks for provisioning the machines and deploying the blog, moving to other server shouldn't be a problem right? Well there are few things to solve and it is actually creating the server. As I wanted to continue in the same fashion to replicate the environment via code, I've made a simple list that would be good for the first hosting provider:
+
+- **Relatively cheap** - I don't need super sized VPS with tons of RAM, right now I think that even the cheapest plan of any provider would be an overkill for site. 
+- **REST API support** - I want to spin up the server via API and configure the resources simply by calling an API. I don't want to click in Web UI.
+- **Extra features** - firewalls, load balancers, monitoring - this would be all nice to have, given the fact that they can be controlled by an API
+- **Hourly billing** - I plan to spin up testing environments and tearing them down all the time - being billed purely on time I've spent is an advantage for me
+- **Terraform provider** will be a plus to kick start the architecture without writing pure Python scripts.
+
+I've chosen Digital Ocean. They have an API, Terraform provider and reasonable pricing. It's not the typical cloud from the big 3 - AWS, Azure or Google Cloud. Digital Ocean doesn't really feel like *cloud* I think about it as more of a modern VPS provider. Using the tools that the cloud provides will be essentially a vendor lock-in and as I've heard on one of [Prague Containers Meetups](https://prgcont.cz/): *"Never go with vendor lock-in. Tools provided by AWS can be useful when you want to quick start and get to market but after that you will always built something for yourself."* Later I will definitely try out AWS, maybe even for hosting this site or other projects.
+
+### Deploy infrastructure with Terraform
 - Digital Ocean has Terraform provider
 - yay! Easy then, no need to write Python scripts to spin up my servers
 - however!
