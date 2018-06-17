@@ -2,7 +2,6 @@
 layout: post
 title:  "Behind the scenes of blog - part 1"
 date:   2018-06-17 12:00:00 +0100
-categories: behind_the_scenes
 ---
 
 Welcome to the first of many post in series *Behind the scenes of blog*! As this is not just my first blog post here, but a whole first blog ever, I've decided to share my learning process about various technologies I've used while creating this site. From most of them I've just heard the cool name of the product, stickers of logos on every single laptop (of course I also have stickers on mine) and read about the hype around Docker, Vagrant, Jenkins, Terraform, Kubernetes and how they are so *amazing* and that they make life so much easier...
@@ -10,6 +9,8 @@ Welcome to the first of many post in series *Behind the scenes of blog*! As this
 And I've said to myself; *"Well this is all great, the talks are super interesting but how does it work and is it hard to start? Finishing quick start of Docker tutorial is one thing but using this on some real site must be different game right?"* So the best thing to learn, or better word, *to expose* myself to this all new trendy technologies is to get hands dirty and try build something. Blog is probably just the stepping stone, as it provides me the space to tell you about all the hiccups and small victories I've encountered when trying to build something simple and small. 
 
 I hope that someone will find this a little bit useful, maybe it will encourage you in similar position as I am, that building something and *sharing* your thoughts is not this big scary monster as it looks like. Enough of intro, let's get down to business!
+
+*Note: All the source code for Ansible, Terraform and Jekyll can be found in [GitHub repo of blog](https://github.com/phandox/blog). Feel free to see the full code there!*
 
 ## Part 1 - Goals of the blog and technology behind it
 
