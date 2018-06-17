@@ -101,20 +101,23 @@ In dev environment I have created blog site, which shows me the result, everythi
 I've chosen Digital Ocean. They have an API, Terraform provider and reasonable pricing. It's not the typical cloud from the big 3 - AWS, Azure or Google Cloud. Digital Ocean doesn't really feel like *cloud* I think about it as more of a modern VPS provider. Using the tools that the cloud provides will be essentially a vendor lock-in and as I've heard on one of [Prague Containers Meetups](https://prgcont.cz/): *"Never go with vendor lock-in. Tools provided by AWS can be useful when you want to quick start and get to market but after that you will always built something for yourself."* Later I will definitely try out AWS, maybe even for hosting this site or other projects.
 
 ### Deploy infrastructure with Terraform
-- Digital Ocean has Terraform provider
-- yay! Easy then, no need to write Python scripts to spin up my servers
-- however!
-    - there are few pain points I have with Terraform
-        - sometimes the state refresh just fails
-        - DNS domain is dependent on Droplet - you destroy the Droplet, domain is also destroyed - not just records as CNAME but the whole domain
-            - not a big deal, Terraform will create the domain again right? However I haven't tried what happens with two Droplets being on the same domain. 
-        - Support of DigitalOcean is not that vast in Terraform - same thing with vSphere
-        - no out of box support of Ansible as provider
-            - as configuration is dependent on Ansible, there is no provisioner in Terraform for Ansible.
-            - used local-exec but I wasn't able to get dynamic Terraform inventory because the state file didn't exist during Terraform deployment :(
-        - Terraform clearly focus on public cloud such as AWS, Azure.
-    - I will eventually write Python scripts for deploying the infrastructure to Digital ocean - REST API and direct call of Ansible inside Python
-    - will return to Terraform when I will be hosting in true public cloud
+Because Digital Ocean has a provider for Terraform ready, I though to myself that spinning up Droplet would be very easy. However there are few pain points with Terraform and Digital Ocean:
+
+- Sometimes the tfstate file doesn't refresh and I have to deploy infrastructure again
+- No support for Ansible as a provisioner out of box
+- When managing DNS records with Terraform, it will also affect the whole domain not just the records
+
+Support of Ansible in Terraform would definitely by nice to have, but workaround for this can be achieve by usage of  [dynamic inventory for Terraform](https://github.com/adammck/terraform-inventory) made by Adam Mckaig, which require just the Terraform state file. It has worked for my provisioning playbook and deployment playbook without issue. So to deploy completely new infrastructure I use these commands:
+```
+$ terraform plan
+$ terraform apply
+$ ansible-playbook -i terraform-inventory <playbook for provisioning>
+$ ansible-playbook -i terraform-inventory <playbook for deployment>
+``` 
+
+There are some constrains, as you have to be in directory of your `tfstate` file or set up environment variable `TF_STATE` for path to `tfstate` file as stated in the [README of the terraform-inventory project](https://github.com/adammck/terraform-inventory#more-usage).
+
+I've already moved my domain `luknagy.com` to be managed by Digital Ocean, as they provide the service. I've successfully changed NS records and the domain lives in my Digital Ocean account. When the blog will be deployed, I want Terraform to create a CNAME `blog.luknagy.com` on A record pointing to droplet. However to manage domain resource, `ip_address` is a *required argument* to be used with `digitalocean_domain` resource. That means, you can't just create a domain with Terraform and have no droplets assigned to this domain. From one perspective, this makes sense, because what would you do with the domain if there are no Droplets using it? I could think of having MX records to direct your emails which arrive at `@luknagy.com` as a one example, but this assume you have already a Droplet which serves as mail server and it will have a A record assigned. But when you do `terraform destroy` (although not really used for production), to remove your droplets, it will also take the whole domain with it. So after issuing that command your Digital Ocean account is empty of any resources. However recovery is easy, you just deploy your infrastructure again, with `terraform apply` and the domain with records will be created together with IP address of a new Droplet. The state is satisfied and you don't end up with half destroyed infrastructure, so I guess this works as intended but I know this surprised me on the first try I issued `terraform destroy` and saw what does the Terraform want to remove. Also keep in mind that IP address you get for new droplet is different so you might come to SSH issues with warnings of MITM attack - you should update your `known_hosts` file accordingly.
 
 ## Blog is running, finish line crossed right? Not so fast...
 - This is just the beginning
