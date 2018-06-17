@@ -5,7 +5,7 @@ date:   2018-06-07 06:00:00 +0100
 categories: behind_the_scenes
 ---
 
-Welcome to the first of many post in series *Behind the scenes of blog*! As this is not just my first blog post here but a whole first blog ever, I've decided to share my learning process about various technologies I've used while creating this site. From most of them I've just heard the cool name of the product, stickers of logos on every single laptop (of course I also have stickers on mine) and read about the hype around Docker, Vagrant, Jenkins, Terraform, Kubernetes and how they are so *amazing* and that they make life so much easier...
+Welcome to the first of many post in series *Behind the scenes of blog*! As this is not just my first blog post here, but a whole first blog ever, I've decided to share my learning process about various technologies I've used while creating this site. From most of them I've just heard the cool name of the product, stickers of logos on every single laptop (of course I also have stickers on mine) and read about the hype around Docker, Vagrant, Jenkins, Terraform, Kubernetes and how they are so *amazing* and that they make life so much easier...
 
 And I've said to myself; *"Well this is all great, the talks are super interesting but how does it work and is it hard to start? Finishing quick start of Docker tutorial is one thing but using this on some real site must be different game right?"* So the best thing to learn, or better word, *to expose* myself to this all new trendy technologies is to get hands dirty and try build something. Blog is probably just the stepping stone, as it provides me the space to tell you about all the hiccups and small victories I've encountered when trying to build something simple and small. 
 
@@ -120,13 +120,11 @@ There are some constrains, as you have to be in directory of your `tfstate` file
 I've already moved my domain `luknagy.com` to be managed by Digital Ocean, as they provide the service. I've successfully changed NS records and the domain lives in my Digital Ocean account. When the blog will be deployed, I want Terraform to create a CNAME `blog.luknagy.com` on A record pointing to droplet. However to manage domain resource, `ip_address` is a *required argument* to be used with `digitalocean_domain` resource. That means, you can't just create a domain with Terraform and have no droplets assigned to this domain. From one perspective, this makes sense, because what would you do with the domain if there are no Droplets using it? I could think of having MX records to direct your emails which arrive at `@luknagy.com` as a one example, but this assume you have already a Droplet which serves as mail server and it will have a A record assigned. But when you do `terraform destroy` (although not really used for production), to remove your droplets, it will also take the whole domain with it. So after issuing that command your Digital Ocean account is empty of any resources. However recovery is easy, you just deploy your infrastructure again, with `terraform apply` and the domain with records will be created together with IP address of a new Droplet. The state is satisfied and you don't end up with half destroyed infrastructure, so I guess this works as intended but I know this surprised me on the first try I issued `terraform destroy` and saw what does the Terraform want to remove. Also keep in mind that IP address you get for new droplet is different so you might come to SSH issues with warnings of MITM attack - you should update your `known_hosts` file accordingly.
 
 ## Blog is running, finish line crossed right? Not so fast...
-- This is just the beginning
-- I am happy I made the first prototype but there is much work to be done
-- First struggle was with HTTPS - I want to use Let's Encrypt with certbot, but looks like the architecture is not the best
-    - web server with blog content is directly hooked to Internet - need to deploy reverse proxy to forward certbot required traffic to correct container
-- Missing features
-    - Logging - I need another container where my logs will be centralized - I will probably use ELK (huge overkill I know, but fun learning experience right?)
-    - Reverse proxy (HAProxy or nginx? I shall see...)
-    - HTTPS support - Let's Encrypt, obviously as said earlier in post.
-    - Monitoring - need to do research - traditional or more container centric such as Prometheus?
-    - Docker Cluster - new Droplet, higher availability with Docker Swarm, maybe even Kubernetes? (again, overkill but as intro learning experience I would prefer Kubernetes).
+
+And now I get to the last part of this blog post. Terraform creates a Droplet for me, Ansible provision new machine and deploy the blog content on new droplet and you are able to read this post. Seems like the work is done and now I just create more article right? Fortunately, no. This is just the beginning, let's call it a first prototype. Much work will be done to make the site better and correct the mistakes and obstacles I've made for myself.
+
+I want to add HTTPS support, reverse proxy in front of the containers, monitoring the health of the containers and get alerts if something goes wrong (or better, try to auto-heal), centralized logging for docker host and from containers itself using log management stack such as ELK and high availability of containers, clustering them on multiple nodes across the regions and after that, orchestration is necessary...
+
+So as you can see **a lot** of work awaits. I am sure as I will learn along the path that I will find more resources on how to do architecture better, what tools does exist, the advantages and disadvantages of different cloud providers and more. I'll happily write another posts about my new findings and how I would apply them on the site. 
+
+This was a really long post for an introduction and I will definitely make the subsequent posts shorter, to get them more digestible. If you got all the way to the end, you have my respect and thank you for reading this post. 
