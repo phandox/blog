@@ -13,6 +13,8 @@ This project serve as learning experience for:
 
 I will try to get exposure to Infrastructure as Code principles and will try to blog about this whole journey from building infrastructure using open source tools I tend to hear a lot about. Hopefully I will have an web application, which is cloud-ready, automatically deployed when all the tests pipeline are successful and easily replaceable on other machines to deploy in test environment.
 
+You can find the blog on http://blog.luknagy.com
+
 # How is this repository organized
 
 Repository is organized into 4 main directories
