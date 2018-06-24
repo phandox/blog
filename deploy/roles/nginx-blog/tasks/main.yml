@@ -56,7 +56,6 @@
       - "nginx-blog-content:{{ webcontent_dir }}/blog/:ro,z"
       - "nginx-conf-dir:/etc/nginx/conf.d/:ro,z"
     state: started
-    published_ports:
-      - "{{ docker_host_webport }}:80"
     command: 'nginx -c {{ nginx_main_config_dir }}/nginx.conf -g "daemon off;"'
+    labels: "traefik.frontend.rule=Host:{{ blog_hostname }}" # Matcher for Traefik reverse proxy
     restart: yes

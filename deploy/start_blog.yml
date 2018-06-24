@@ -9,6 +9,10 @@
       state: present
       extra_args: --user
 
+  - name: Deploy reverse proxy
+    include_role: 
+      name: traefik-reverse-proxy
+
   - name: Deploy blog on NGINX
     include_role:
       name: nginx-blog
