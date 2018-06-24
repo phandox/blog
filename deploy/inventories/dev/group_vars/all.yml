@@ -1,1 +1,2 @@
 docker_host_webport: 8080
+blog_hostname: "test-blog.luknagy.com"
