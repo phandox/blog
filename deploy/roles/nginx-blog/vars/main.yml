@@ -5,7 +5,6 @@ jekyll_cached_gemsdir: "{{ local_jekyll_blogdir }}/vendor/bundle"
 
 
 # Variables used inside nginx docker container
-blog_hostname: "blog.luknagy.com"
 webcontent_dir: "/usr/share/nginx/html"
 nginx_main_config_dir: "/usr/share/nginx/nginx_main_config"
 
