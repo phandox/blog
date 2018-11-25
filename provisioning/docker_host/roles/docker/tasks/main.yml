@@ -88,7 +88,7 @@
 
 - name: Copy public key to machine for passwordless login
   copy:
-    src: '/home/lukas/.ssh/id_rsa_passwordless.pub'
+    src: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa_passwordless.pub"
     dest: '/home/{{ docker_user_name }}/.ssh/authorized_keys' # This will override all known authorized keys
     mode: 0600 # rw-------
     owner: "{{ docker_user_name }}"

@@ -10,7 +10,7 @@
     image: jekyll/jekyll
     volumes:
       - "{{ local_jekyll_blogdir }}/:/srv/jekyll"
-      - "{{ jekyll_cached_gemsdir }}/:/usr/local/bundle"
+      - "{{jekyll_cached_gemsdir }}/:/usr/local/bundle"
     command: "jekyll build --destination /srv/jekyll/_site/"
     state: started
     auto_remove: no
