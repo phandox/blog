@@ -7,7 +7,7 @@
 - name: Generate blog with Jekyll container on localhost
   docker_container:
     name: jekyll_builder
-    image: jekyll/jekyll
+    image: jekyll/jekyll:stable
     volumes:
       - "{{ local_jekyll_blogdir }}/:/srv/jekyll"
       - "{{jekyll_cached_gemsdir }}/:/usr/local/bundle"
