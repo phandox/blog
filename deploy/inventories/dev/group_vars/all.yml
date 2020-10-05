@@ -1,4 +1,0 @@
-docker_host_webport: 8800
-traefik_api_port: 8081
-blog_hostname: test-blog.luknagy.com
-nginx_main_config_dir: "/usr/share/nginx/nginx_main_config"

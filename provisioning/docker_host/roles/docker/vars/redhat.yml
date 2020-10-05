@@ -1,6 +1,0 @@
-# Dependencies from: https://docs.docker.com/install/linux/docker-ce/centos/#install-docker-ce
-docker_dependencies:
-  - yum-utils
-  - device-mapper-persistent-data
-  - lvm2
-  - epel-release # For support of pip
