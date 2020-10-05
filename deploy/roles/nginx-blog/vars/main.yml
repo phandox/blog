@@ -1,4 +1,4 @@
-local_jekyll_blogdir: /home/lukas/blog/jekyll-blog
+local_jekyll_blogdir: "{{ lookup('env', 'HOME') }}/blog/jekyll-blog"
 jekyll_cached_gemsdir: "{{ local_jekyll_blogdir }}/vendor/bundle"
 
 

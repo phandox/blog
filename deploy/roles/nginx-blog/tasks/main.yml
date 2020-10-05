@@ -56,6 +56,22 @@
       - "nginx-blog-content:{{ webcontent_dir }}/blog/:ro,z"
       - "nginx-conf-dir:/etc/nginx/conf.d/:ro,z"
     state: started
+    published_ports:
+      - "{{ docker_host_webport }}:80"
     command: 'nginx -c {{ nginx_main_config_dir }}/nginx.conf -g "daemon off;"'
-    labels: "traefik.frontend.rule=Host:{{ blog_hostname }}" # Matcher for Traefik reverse proxy
     restart: yes
+
+- name: Allow connection to exposed web port
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ docker_host_webport }}"
+    ctstate:
+      - NEW
+    state: present
+  become: yes
+
+# TODO fix to do this only on handler
+- name: Save iptables config
+  command: service iptables save
+  become: yes
