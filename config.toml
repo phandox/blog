@@ -1,0 +1,4 @@
+baseURL = "https://phandox.github.io/"
+languageCode = "en-us"
+title = "Hello Blog"
+theme = "hugo-PaperMod"
